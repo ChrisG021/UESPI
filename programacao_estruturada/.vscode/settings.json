@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.md": "bibtex",
+        "stdio.h": "c"
+    }
+}
