@@ -90,86 +90,75 @@ void exibirEditora(Editora editoraDB[]) {
     }
 }
 
-Produto cadastrarProduto(Genero generoDB[], Editora editoraDB[]) {
-    int j, opcao;
+Produto cadastrarProduto(Genero generoDB[],Editora editoraDB[]){
+    int j;
+    int findGenero = 0 ;
+    int findEditora = 0;
+    Genero g;
+    Editora e;
     Produto p;
-
-    printf("\n---------- Sistema de cadastro de Livro -----------\n");
+    printf("\n---------- Sistema de cadastro de produto -----------\n");
     printf("Digite o titulo do livro: ");
-    scanf(" %[^\n]", p.titulo);
+    scanf(" %[^\n]",&p.titulo);
     printf("Digite o autor do livro: ");
-    scanf(" %[^\n]", p.autor);
+    scanf(" %[^\n]",&p.autor);
+    // ======= GÊNERO =======
+    printf("Digite o genero: ");
+    scanf(" %[^\n]", g.nome);
+    to_lower(g.nome);
 
-    // ======= ESCOLHER GÊNERO =======
-    // sistema de escolha via opçao a fim de evitar redundancia no DB
-    if (count_g > 0) {
-        printf("\nEscolha um genero:\n");
-        for (j = 0; j < count_g; j++) {
-            printf("%d - %s\n", j + 1, generoDB[j].nome);
+    for (j = 0; j < count_g; j++) {
+        if (strcmp(g.nome, generoDB[j].nome) == 0) {
+            findGenero = 1;
+            p.genero = generoDB[j]; // associa ao produto
+            break;
         }
-        printf("0 - Cadastrar novo genero\n");
-        printf("Opção: ");
-        scanf("%d", &opcao);
-
-        if (opcao >= 1 && opcao <= count_g) {
-            p.genero = generoDB[opcao - 1];
-        } else if (opcao == 0) {
-            if (count_g < 30) {
-                p.genero = cadastrarGenero();
-                generoDB[count_g++] = p.genero;
-            } else {
-                printf("Limite de generos atingido.\n");
-            }
-        } else {
-            printf("Opção invalida. Produto nao cadastrado.\n");
-            return p;
-        }
-    } else {
-        printf("Nenhum genero cadastrado. Cadastrando novo genero:\n");
-        p.genero = cadastrarGenero();
-        generoDB[count_g++] = p.genero;
     }
 
-    // ======= ESCOLHER EDITORA =======
-    if (count_e > 0) {
-        printf("\nEscolha uma editora:\n");
-        for (j = 0; j < count_e; j++) {
-            printf("%d - %s\n", j + 1, editoraDB[j].nome);
-        }
-        printf("0 - Cadastrar nova editora\n");
-        printf("Opção: ");
-        scanf("%d", &opcao);
-
-        if (opcao >= 1 && opcao <= count_e) {
-            p.editora = editoraDB[opcao - 1];
-        } else if (opcao == 0) {
-            if (count_e < 30) {
-                p.editora = cadastrarEditora();
-                editoraDB[count_e++] = p.editora;
-            } else {
-                printf("Limite de editoras atingido.\n");
-            }
+    if (!findGenero) {
+        printf("Genero não encontrado...indo para o cadastro dele\n");
+        if (count_g < 30) {
+            p.genero = cadastrarGenero();
+            generoDB[count_g++] = p.genero;
         } else {
-            printf("Opção inválida. Produto não cadastrado.\n");
-            return p;
+            printf("Limite de generos atingido. Não é possível cadastrar mais.\n");
         }
-    } else {
-        printf("Nenhuma editora cadastrada. Cadastrando nova editora:\n");
-        p.editora = cadastrarEditora();
-        editoraDB[count_e++] = p.editora;
     }
 
-    // ======= OUTROS CAMPOS =======
+    // ======= EDITORA =======
+    printf("Digite a editora: ");
+    scanf(" %[^\n]", e.nome);
+    to_lower(e.nome);
+
+    for (j = 0; j < count_e; j++) {
+        if (strcmp(e.nome, editoraDB[j].nome) == 0) {
+            findEditora = 1;
+            p.editora = editoraDB[j];
+            break;
+        }
+    }
+
+    if (!findEditora) {
+        printf("Editora não encontrada...indo para o cadastro dela\n");
+        if (count_e < 30) {
+            p.editora = cadastrarEditora();
+            editoraDB[count_e++] = p.editora;
+        } else {
+            printf("Limite de editoras atingido. Não é possível cadastrar mais.\n");
+        }
+    }
+    
+    
     printf("Digite a data de lancamento do livro: ");
-    scanf("%d", &p.data_lanc);
+    scanf("%d",&p.data_lanc);
     printf("Digite a restricao de idade: ");
-    scanf("%d", &p.restricao_idade);
+    scanf("%d",&p.restricao_idade);
     printf("Digite a quantidade em estoque: ");
-    scanf("%d", &p.quantidade);
+    scanf("%d",&p.quantidade);
     printf("Digite o preco: ");
-    scanf("%lf", &p.preco);
+    scanf("%lf",&p.preco);
 
-    max_p++;
+    max_p++;//quantidade max de produtos cadastrados
     return p;
 }
 
@@ -252,7 +241,7 @@ int main(void) {
                 printf("\n3 - Gerenciar Generos");
                 printf("\n4 - Gerenciar Produtos");
 
-                printf("\n5 - Sair");
+                printf("\n0 - Sair");
                 printf("\n\nDigite a opcao: ");
                 scanf("%d", &op);
 
@@ -352,12 +341,13 @@ int main(void) {
                                 default:
                                     printf("Opcao invalida. Tente novamente.\n");
                             }
-                        } while (op != 3);
-                        break;
+                        } while (op != 3); // Voltar ao menu principal
 
-                    case 4: // gerenciamento de produtos
-                        do {
-                            printf("\n------ Menu de Gerenciamento de Produtos ------");
+                        break;
+                    case 4://gerenciamento de produtos
+                        do
+                        {
+                            printf("\n------ Menu de Gerenciamento de produto ------");
                             printf("\n1 - Cadastrar Produto");
                             printf("\n2 - Exibir Produtos");
                             printf("\n3 - Voltar ao menu principal");
@@ -367,7 +357,7 @@ int main(void) {
                             switch (op) {
                                 case 1:
                                     if (count_p < 50) {
-                                        produtoDB[count_p++] = cadastrarProduto(generoDB, editoraDB);
+                                        produtoDB[count_p++] = cadastrarProduto(generoDB,editoraDB);
                                     } else {
                                         printf("Limite de produtos atingido.\n");
                                     }
@@ -384,32 +374,27 @@ int main(void) {
                                 default:
                                     printf("Opcao invalida. Tente novamente.\n");
                             }
-                        } while (op != 3);
-                        break;
-
+                        } while (op!=3);
+                    
                     case 5:
-                        printf("Saindo do sistema de gerenciamento...\n");
+                    case 0:
+                        printf("Encerrando o programa...\n");
                         break;
 
                     default:
                         printf("Opcao invalida. Tente novamente.\n");
                 }
-            } while (op != 5);
-            break;
+            } while (op != 0);
 
+            break;
         case 2:
-            printf("Funcionalidade 'Atendimento ao cliente' ainda nao implementada.\n");
             break;
-
         case 0:
-            printf("Saindo do sistema geral...\n");
+            printf("Encerrando o programa...\n");
             break;
-
         default:
             printf("Opcao invalida. Tente novamente.\n");
-        }
-
-    } while (op != 0);
+    } while (op!=0);
 
     return 0;
 }
