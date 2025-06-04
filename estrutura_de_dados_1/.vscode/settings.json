@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.md": "bibtex",
+        "list.h": "c",
+        "stdio.h": "c"
+    }
+}
